@@ -16,6 +16,7 @@ module powerbi.extensibility.visual {
         private node: d3.Selection<SVGElement>;
         private host: IVisualHost;
         private selectionManager: ISelectionManager;
+        private circle : HTMLElement;
 
 
         constructor(options: VisualConstructorOptions) {
@@ -80,7 +81,7 @@ module powerbi.extensibility.visual {
             console.log(nodes);
             // Normalize for fixed-depth.
             nodes.forEach(function (d) {
-                d.y = d.depth * 180;
+                d.y = d.depth * 400;
             });
             console.log(nodes);
             // Update the nodes…

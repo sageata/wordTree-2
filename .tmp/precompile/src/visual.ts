@@ -16,6 +16,7 @@ module powerbi.extensibility.visual.PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630 
         private node: d3.Selection<SVGElement>;
         private host: IVisualHost;
         private selectionManager: ISelectionManager;
+        private circle : HTMLElement;
 
 
         constructor(options: VisualConstructorOptions) {
@@ -80,7 +81,7 @@ module powerbi.extensibility.visual.PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630 
             console.log(nodes);
             // Normalize for fixed-depth.
             nodes.forEach(function (d) {
-                d.y = d.depth * 180;
+                d.y = d.depth * 400;
             });
             console.log(nodes);
             // Update the nodes…

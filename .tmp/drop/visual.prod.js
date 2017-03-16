@@ -61,7 +61,7 @@ var powerbi;
                         console.log(nodes);
                         // Normalize for fixed-depth.
                         nodes.forEach(function (d) {
-                            d.y = d.depth * 180;
+                            d.y = d.depth * 400;
                         });
                         console.log(nodes);
                         // Update the nodes…
