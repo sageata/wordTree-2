@@ -6,3 +6,19 @@
   background: yellow;
   padding: 5px;
 }
+.visual-PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630_DEBUG .node {
+  cursor: pointer;
+}
+.visual-PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630_DEBUG .node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.visual-PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630_DEBUG .node text {
+  font: 10px sans-serif;
+}
+.visual-PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630_DEBUG .link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
