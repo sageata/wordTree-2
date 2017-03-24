@@ -16,12 +16,15 @@ module powerbi.extensibility.visual {
         private node: d3.Selection<SVGElement>;
         private host: IVisualHost;
         private selectionManager: ISelectionManager;
-        private circle : HTMLElement;
+        private target: HTMLElement;
+        private updateCount: number;
 
 
         constructor(options: VisualConstructorOptions) {
 
             this.host = options.host;
+            this.target = options.element;
+            this.updateCount = 0;
             this.selectionManager = options.host.createSelectionManager()
             let allowInteractions = options.host.allowInteractions;
 
@@ -97,7 +100,7 @@ module powerbi.extensibility.visual {
                 .attr("transform", function (d: any) {
                     return "translate(" + d.y0 + "," + d.x0 + ")";
                 })
-                .on("mouseover", click);
+                .on("ClickControl", click);
             console.log(nodeEnter);
             nodeEnter.append("circle")
                 .attr("r", 1e-6)
@@ -205,12 +208,36 @@ module powerbi.extensibility.visual {
                     d.children = d._children;
                     d._children = null;
                 };
-                this.canvas.append("circle")
-                    .attr("cx", 100)
-                    .attr("cy", 100)
-                    .attr("r", 50)
-                    .style("fill", 'red');
+                
             }
+
+            function addGreenCircle(){
+                this.canvas.append("circle")
+                    .attr("cx", 150)
+                    .attr("cy", 150)
+                    .attr("r", 50)
+                    .style("fill", 'green')
+            };
+            this.canvas.append("text")
+                .attr("x", 200)
+                .attr("y", 200)
+                .attr("font-size", 200)
+                .text("thext")
+                .attr("onClick", "addGreenCircle");
+            this.canvas.append("input")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 200)
+                .attr("height", 100)
+                .style("fill", "red")
+                .attr("value", "submit");
+            
+            //var updateCount = 0;
+
+            this.target.innerHTML = '<!DOCTYPE html><head> <link rel="stylesheet" href="styles/styles.css"></head><meta charset="utf-8"><title>Word Tree</title><div id="header"> <div class="wrapper"> <h1 id="logo"><a href=".">Word Tree</a></h1> <form id="form-source"> <input type="text" id="source" placeholder=""> </form> <form id="form"> <input type="text" id="keyword" placeholder="Keyword…"> <label for="reverse" style="font-size: small"><input id="reverse" type="checkbox"> reverse tree</label> <label for="phrase-line" style="font-size: small"><input id="phrase-line" type="checkbox"> one phrase per line</label> </form> </div></div><div id="help-left"> Shift-click to make that word the root.</div><div id="vis"></div><div id="text"></div><div id="heat"></div><div class="clear"></div><div id="help-window"> <div class="help-wrapper grey"> <div class="wrapper"> <h2>Paste Text</h2> <p><textarea id="paste"></textarea> <p><button id="paste-go" class="first last">Generate WordTree!</button> <label for="paste-save"><input type="checkbox" id="paste-save" checked> Shareable</label> <span style="color: #999; font-style: italic">(saves your text on the server)</span> </div></div></div></html>';
+
+            
+
 
             //console.log("Width: "+width+"; Height: "+height);
             //console.log(flareJSON);
