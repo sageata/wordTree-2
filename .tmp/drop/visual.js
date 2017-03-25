@@ -24,7 +24,8 @@ var powerbi;
                         this.target = options.element;
                         this.updateCount = 0;
                         this.selectionManager = options.host.createSelectionManager();
-                        var allowInteractions = options.host.allowInteractions;
+                        //let allowInteractions = options.host.allowInteractions;
+                        //this.host.allowInteractions = true;
                         var canvas = this.canvas = d3.select(options.element)
                             .append('svg').classed("Word Tree", true);
                         this.canvas.append("circle")
@@ -34,9 +35,10 @@ var powerbi;
                             .style("fill", 'green');
                     }
                     Visual.prototype.update = function (options) {
+                        //this.host.allowInteractions = false;
                         var width = options.viewport.width, height = options.viewport.height, root, duration = 750, i = 0;
                         var flareJSON = JSON.parse(flareJSONtext);
-                        this.canvas
+                        var canvas = this.canvas
                             .attr("width", width)
                             .attr("height", height)
                             .append("g");
@@ -174,20 +176,15 @@ var powerbi;
                             }
                             ;
                         }
-                        function addGreenCircle() {
-                            this.canvas.append("circle")
-                                .attr("cx", 150)
-                                .attr("cy", 150)
-                                .attr("r", 50)
-                                .style("fill", 'green');
-                        }
-                        ;
+                        //let selectionManager = this.selectionManager;
+                        //This must be an anonymous function instead of a lambda because
+                        //d3 uses 'this' as the reference to the element that was clicked.
                         this.canvas.append("text")
                             .attr("x", 200)
                             .attr("y", 200)
                             .attr("font-size", 200)
-                            .text("thext")
-                            .attr("onClick", "addGreenCircle");
+                            .text("text")
+                            .on('dblclick', addCircle);
                         this.canvas.append("input")
                             .attr("x", 0)
                             .attr("y", 0)
@@ -195,8 +192,17 @@ var powerbi;
                             .attr("height", 100)
                             .style("fill", "red")
                             .attr("value", "submit");
+                        function addCircle() {
+                            canvas.append("circle")
+                                .attr("cx", 150)
+                                .attr("cy", 150)
+                                .attr("r", 50)
+                                .style("fill", 'navy');
+                        }
+                        ;
                         //var updateCount = 0;
-                        this.target.innerHTML = '<!DOCTYPE html><head> <link rel="stylesheet" href="styles/styles.css"></head><meta charset="utf-8"><title>Word Tree</title><div id="header"> <div class="wrapper"> <h1 id="logo"><a href=".">Word Tree</a></h1> <form id="form-source"> <input type="text" id="source" placeholder=""> </form> <form id="form"> <input type="text" id="keyword" placeholder="Keyword…"> <label for="reverse" style="font-size: small"><input id="reverse" type="checkbox"> reverse tree</label> <label for="phrase-line" style="font-size: small"><input id="phrase-line" type="checkbox"> one phrase per line</label> </form> </div></div><div id="help-left"> Shift-click to make that word the root.</div><div id="vis"></div><div id="text"></div><div id="heat"></div><div class="clear"></div><div id="help-window"> <div class="help-wrapper grey"> <div class="wrapper"> <h2>Paste Text</h2> <p><textarea id="paste"></textarea> <p><button id="paste-go" class="first last">Generate WordTree!</button> <label for="paste-save"><input type="checkbox" id="paste-save" checked> Shareable</label> <span style="color: #999; font-style: italic">(saves your text on the server)</span> </div></div></div></html>';
+                        /*this.target.innerHTML = '<!DOCTYPE html><head> <link rel="stylesheet" href="styles/styles.css"></head><meta charset="utf-8"><title>Word Tree</title><div id="header"> <div class="wrapper"> <h1 id="logo"><a href=".">Word Tree</a></h1> <form id="form-source"> <input type="text" id="source" placeholder=""> </form> <form id="form"> <input type="text" id="keyword" placeholder="Keyword…"> <label for="reverse" style="font-size: small"><input id="reverse" type="checkbox"> reverse tree</label> <label for="phrase-line" style="font-size: small"><input id="phrase-line" type="checkbox"> one phrase per line</label> </form> </div></div><div id="help-left"> Shift-click to make that word the root.</div><div id="vis"></div><div id="text"></div><div id="heat"></div><div class="clear"></div><div id="help-window"> <div class="help-wrapper grey"> <div class="wrapper"> <h2>Paste Text</h2> <p><textarea id="paste"></textarea> <p><button id="paste-go" class="first last">Generate WordTree!</button> <label for="paste-save"><input type="checkbox" id="paste-save" checked> Shareable</label> <span style="color: #999; font-style: italic">(saves your text on the server)</span> </div></div></div></html>';
+                        */
                         //console.log("Width: "+width+"; Height: "+height);
                         //console.log(flareJSON);
                         //console.log(node);
