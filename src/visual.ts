@@ -80,133 +80,96 @@ module powerbi.extensibility.visual {
 
 
 
-            //            update(root);
+            update(root);
 
             //d3.select(self.frameElement).style("Height", "800px")
-            //            function update(source:any) {
+            function update(source) {
 
-            // Compute the new tree layout.
-            var nodes = tree.nodes(flareJSON).reverse(),
-                links = tree.links(nodes);
-            console.log(nodes);
-            // Normalize for fixed-depth.
-            nodes.forEach(function (d) {
-                d.y = d.depth * 400;
-            });
-            console.log(nodes);
-            // Update the nodes…
-            var node = this.canvas.selectAll("g.node")
-                .data(nodes, function (d: any) {
-                    return d.id || (d.id = ++i);
+                // Compute the new tree layout.
+                var nodes = tree.nodes(root).reverse(),
+                    links = tree.links(nodes);
 
-                });
+                // Normalize for fixed-depth.
+                nodes.forEach(function(d) { d.y = d.depth * 180; });
 
-            // Enter any new nodes at the parent's previous position.
-            var nodeEnter = node.enter().append("g")
-                .attr("class", "node")
-                .attr("transform", function (d: any) {
-                    return "translate(" + d.y0 + "," + d.x0 + ")";
-                })
-                .on("ClickControl", click);
-            console.log(nodeEnter);
-            nodeEnter.append("circle")
-                .attr("r", 1e-6)
-                .style("fill", function (d: any) {
-                    return d._children ? "lightsteelblue" : "#fff";
-                });
+                // Update the nodes…
+                var node = canvas.selectAll("g.node")
+                    .data(nodes, function(d:any) { return d.id || (d.id = ++i); });
 
-            nodeEnter.append("text")
-                .attr("x", function (d: any) {
-                    return d.children || d._children ? -10 : 10;
-                })
-                .attr("dy", ".35em")
-                .attr("text-anchor", function (d) {
-                    return d.children || d._children ? "end" : "start";
-                })
-                .text(function (d: any) {
-                    return d.name;
-                })
-                .style("fill-opacity", 1e-6);
+                // Enter any new nodes at the parent's previous position.
+                var nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+                    .on("click", click);
 
+                nodeEnter.append("circle")
+                    .attr("r", 1e-6)
+                    .style("fill", function(d:any) { return d._children ? "lightsteelblue" : "#fff"; });
 
-            // Transition nodes to their new position.
-            var nodeUpdate = node.transition()
-                .duration(duration)
-                .attr("transform", function (d) {
-                    return "translate(" + d.y + "," + d.x + ")";
-                });
+                nodeEnter.append("text")
+                    .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+                    .attr("dy", ".35em")
+                    .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+                    .text(function(d) { return d.name; })
+                    .style("fill-opacity", 1e-6);
 
-            nodeUpdate.select("circle")
-                .attr("r", 4.5)
-                .style("fill", function (d) {
-                    return d._children ? "lightsteelblue" : "#fff";
-                });
+                // Transition nodes to their new position.
+                var nodeUpdate = node.transition()
+                    .duration(duration)
+                    .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
-            nodeUpdate.select("text")
-                .style("fill-opacity", 1);
+                nodeUpdate.select("circle")
+                    .attr("r", 4.5)
+                    .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
-            // Transition exiting nodes to the parent's new position.
-            var nodeExit = node.exit().transition()
-                .duration(duration)
-                .attr("transform", function (d) {
-                    return "translate(" + d.y + "," + d.x + ")";
-                })
-                .remove();
+                nodeUpdate.select("text")
+                    .style("fill-opacity", 1);
 
-            nodeExit.select("circle")
-                .attr("r", 1e-6);
+                // Transition exiting nodes to the parent's new position.
+                var nodeExit = node.exit().transition()
+                    .duration(duration)
+                    .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+                    .remove();
 
-            nodeExit.select("text")
-                .style("fill-opacity", 1e-6);
+                nodeExit.select("circle")
+                    .attr("r", 1e-6);
 
-            // Update the links…
-            var link = this.canvas.selectAll("path.link")
-                .data(links, function (d: any) {
-                    return d.target.id;
-                });
+                nodeExit.select("text")
+                    .style("fill-opacity", 1e-6);
 
-            // Enter any new links at the parent's previous position.
-            link.enter().insert("path", "g")
-                .attr("class", "link")
-                .attr("d", function (d: any) {
-                    var o = {
-                        x: d.x0,
-                        y: d.y0
-                    };
-                    return diagonal({
-                        source: o,
-                        target: o
+                // Update the links…
+                var link = canvas.selectAll("path.link")
+                    .data(links, function(d:any) { return d.target.id; });
+
+                // Enter any new links at the parent's previous position.
+                link.enter().insert("path", "g")
+                    .attr("class", "link")
+                    .attr("d", function(d) {
+                        var o = {x: source.x0, y: source.y0};
+                        return diagonal({source: o, target: o});
                     });
+
+                // Transition links to their new position.
+                link.transition()
+                    .duration(duration)
+                    .attr("d", diagonal);
+
+                // Transition exiting nodes to the parent's new position.
+                link.exit().transition()
+                    .duration(duration)
+                    .attr("d", function(d) {
+                        var o = {x: source.x, y: source.y};
+                        return diagonal({source: o, target: o});
+                    })
+                    .remove();
+
+                // Stash the old positions for transition.
+                nodes.forEach(function(d:any) {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
                 });
-
-            // Transition links to their new position.
-            link.transition()
-                .duration(duration)
-                .attr("d", diagonal);
-
-            // Transition exiting nodes to the parent's new position.
-            link.exit().transition()
-                .duration(duration)
-                .attr("d", function (d: any) {
-                    var o = {
-                        x: d.x,
-                        y: d.y
-                    };
-                    return diagonal({
-                        source: o,
-                        target: o
-                    });
-                })
-                .remove();
-
-            // Stash the old positions for transition.
-            nodes.forEach(function (d: any) {
-                d.x0 = d.x;
-                d.y0 = d.y;
-            });
-            //            }
-
-            //          update(root); 
+            };
+            //         
             function click(d) {
                 if (d.children) {
                     d._children = d.children;
@@ -215,8 +178,9 @@ module powerbi.extensibility.visual {
                     d.children = d._children;
                     d._children = null;
                 };
+                update(d);
                 
-            }
+            };
 
             
             //let selectionManager = this.selectionManager;
@@ -224,32 +188,6 @@ module powerbi.extensibility.visual {
             //This must be an anonymous function instead of a lambda because
             //d3 uses 'this' as the reference to the element that was clicked.
             
-
-            this.canvas.append("text")
-                .attr("x", 200)
-                .attr("y", 200)
-                .attr("font-size", 200)
-                .text("text")
-                .on('dblclick', addCircle);
-        
-
-            this.canvas.append("input")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", 200)
-                .attr("height", 100)
-                .style("fill", "red")
-                .attr("value", "submit");
-
-            function addCircle () {
-                canvas.append("circle")
-                    .attr("cx", 150)
-                    .attr("cy", 150)
-                    .attr("r", 50)
-                    .style("fill", 'navy')
-            };
-            
-
             //var updateCount = 0;
 
             /*this.target.innerHTML = '<!DOCTYPE html><head> <link rel="stylesheet" href="styles/styles.css"></head><meta charset="utf-8"><title>Word Tree</title><div id="header"> <div class="wrapper"> <h1 id="logo"><a href=".">Word Tree</a></h1> <form id="form-source"> <input type="text" id="source" placeholder=""> </form> <form id="form"> <input type="text" id="keyword" placeholder="Keyword…"> <label for="reverse" style="font-size: small"><input id="reverse" type="checkbox"> reverse tree</label> <label for="phrase-line" style="font-size: small"><input id="phrase-line" type="checkbox"> one phrase per line</label> </form> </div></div><div id="help-left"> Shift-click to make that word the root.</div><div id="vis"></div><div id="text"></div><div id="heat"></div><div class="clear"></div><div id="help-window"> <div class="help-wrapper grey"> <div class="wrapper"> <h2>Paste Text</h2> <p><textarea id="paste"></textarea> <p><button id="paste-go" class="first last">Generate WordTree!</button> <label for="paste-save"><input type="checkbox" id="paste-save" checked> Shareable</label> <span style="color: #999; font-style: italic">(saves your text on the server)</span> </div></div></div></html>';
