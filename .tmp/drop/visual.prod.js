@@ -35,7 +35,9 @@ var powerbi;
                             .style("fill", 'green');
                     }
                     Visual.prototype.update = function (options) {
-                        //this.host.allowInteractions = false;
+                        //Since this is refreshes each time is important that we clear the canvas each time
+                        //Otherwise the canvas will be poluted
+                        this.canvas.html("");
                         var width = options.viewport.width, height = options.viewport.height, root, duration = 750, i = 0;
                         var flareJSON = JSON.parse(flareJSONtext);
                         var canvas = this.canvas

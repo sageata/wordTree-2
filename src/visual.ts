@@ -45,7 +45,10 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
             
-            //this.host.allowInteractions = false;
+            //Since this is refreshes each time is important that we clear the canvas each time
+            //Otherwise the canvas will be poluted
+            this.canvas.html("")
+            
             var width = options.viewport.width,
                 height = options.viewport.height,
                 root,
@@ -77,8 +80,6 @@ module powerbi.extensibility.visual {
             }
 
             root.children.forEach(collapse);
-
-
 
             update(root);
 

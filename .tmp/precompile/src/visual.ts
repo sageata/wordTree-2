@@ -45,7 +45,10 @@ module powerbi.extensibility.visual.PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630 
 
         public update(options: VisualUpdateOptions) {
             
-            //this.host.allowInteractions = false;
+            //Since this is refreshes each time is important that we clear the canvas each time
+            //Otherwise the canvas will be poluted
+            this.canvas.html("")
+            
             var width = options.viewport.width,
                 height = options.viewport.height,
                 root,
@@ -77,8 +80,6 @@ module powerbi.extensibility.visual.PBI_CV_7414F5D1_01B3_4EC3_811A_EA6FE4832630 
             }
 
             root.children.forEach(collapse);
-
-
 
             update(root);
 
